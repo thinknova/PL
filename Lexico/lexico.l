@@ -1,11 +1,14 @@
-/* ======================================== */
-/* ---------  ANALIZADOR LEXICO  ---------- */
-/* -------  =====================  -------- */                      
-/* ------  * Roberto Marco Sánchez  ------- */
-/* ------  * Pablo E. Ojeda Vasco   ------- */
-/* ======================================== */
+/****************************************************************/
+/*	SOFTWARE NAME: Analizador léxico							*/
+/*	SOFTWARE RELEASE: 1.0										*/
+/*	SOFTWARE LICENSE: GNU General Public License				*/
+/* 	DEVELOPERS: Roberto Marco Sánchez y Pablo E. Ojeda Vasco	*/
+/*	CONTENT:													*/
+/*		Estructura de fichero para analizador léxico 			*/
+/****************************************************************/
 
 %{
+
 #define BREAK 	1
 #define CASE 	2
 #define CHAR 	3
@@ -77,6 +80,7 @@
 
 int numlin=1;
 void error(char*);
+
 %}
 
 letra [a-zA-Z_]
@@ -95,9 +99,7 @@ hexadecimal [0X|0x]{hexa}{hexa}*
 integer_constant {decimal}|{octal}|{hexadecimal}
 
 decimal_floating1 ({digito0}{digito0}*)?"."{digito0}{digito0}*([Ee]([+-])?{digito0}{digito0}*)?
-
 decimal_floating2 {digito0}{digito0}*"."({digito0}{digito0}*)?([Ee]([+-])?{digito0}{digito0}*)?
-
 decimal_floating3 {digito0}{digito0}*([Ee]([+-])?{digito0}{digito0}*)?
 
 comentario1 "/*"{comentario}*"*/"
@@ -111,6 +113,7 @@ hexadecimal_escape_sequence \x{hexa}{hexa}?
 esq {simple_escape_sequence}|{octal_escape_sequence}|{hexadecimal_escape_sequence}|.
 
 %%
+
 break {return BREAK;}
 case {return CASE;}
 char {return CHAR;}
@@ -137,25 +140,13 @@ scanf {return SCANF;}
 " " {}
 {comentario1}|{comentario2} {}
 
-{letra}{letdig}* {//yylval.identificador=strdup(yytext);
-               return IDENT;}
+{letra}{letdig}* {return IDENT;}
+{integer_constant} {return NUMERO;}
+{decimal_floating1}|{decimal_floating2}|{decimal_floating3} {return NUMERO;}
 
-{integer_constant} {//yylval.valor_double=atoi(yytext);
-                    return NUMERO;}
-
-{decimal_floating1}|{decimal_floating2}|{decimal_floating3} {//yylval.valor_double=atof(yytext);
-                                                             return NUMERO;}
-
-'{letra}' {//yylval.caracter = yytext[1]; //'a' --> yytext[1] -> a
-        return CARACTER;}
-
-
-
-\"{letra}{letdig}*\" {//yylval.ristra=strdup(yytext);
-                   return STRING;}
-
-\"(.)*\" {//yylval.ristra=strdup(yytext);
-                   return STRING_C;}
+'{letra}' {return CARACTER;} 
+\"{letra}{letdig}*\" {return STRING;}
+\"(.)*\" {return STRING_C;}
 
 "[" {return LCORCH;} 
 "]" {return RCORCH;} 
@@ -207,12 +198,13 @@ scanf {return SCANF;}
 ^#.* {}
 . {error("Carácter no permitido");}
 <<EOF>> {return 0;}
+
 %%
 
 int main(int argc, char** argv){
 	int s;
 	if(argc>1) yyin=fopen(argv[1],"r");
-	do printf("%i ", s=yylex()); while(s != 0);
+	do printf("%i \n", s=yylex()); while(s != 0);
 	return 0;
 }
 
