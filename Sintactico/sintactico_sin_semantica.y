@@ -77,9 +77,7 @@ struct_o_union
 
 
 programa 
-	:
-         declaraciones
-        
+	: declaraciones
 	;
 
 
