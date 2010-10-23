@@ -1,0 +1,4 @@
+flex lexico_sintactico.l
+bison -v -d sintactico_sin_semantica.y
+gcc -o sintactico_sin_semantica lex.yy.c sintactico_sin_semantica.tab.c -lfl
+./sintactico_sin_semantica

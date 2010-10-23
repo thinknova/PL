@@ -1,11 +1,9 @@
-/****************************************************************/
-/*	SOFTWARE NAME: Analizador Sintáctico						*/
-/*	SOFTWARE RELEASE: 1.0										*/
-/*	SOFTWARE LICENSE: GNU General Public License				*/
-/* 	DEVELOPERS: Roberto Marco Sánchez y Pablo E. Ojeda Vasco	*/
-/*	CONTENT:													*/
-/*		Estructura de fichero para analizador sintáctico		*/
-/****************************************************************/
+/* ======================================== */
+/* -------  ANALIZADOR SINTÁCTICO  -------- */
+/* -------  =====================  -------- */                      
+/* ------  * Roberto Marco Sánchez  ------- */
+/* ------  * Pablo E. Ojeda Vasco   ------- */
+/* ======================================== */
 
 %{
 	#include <stdio.h>
@@ -15,14 +13,131 @@
 	extern int numlin; 	/* lexico le da valores */
 	int yydebug=1; 		/* modo debug si -t */
 
+    /******* TODAVÍA NO HACE FALTA, LO USAREMOS EN EL SEMÁNTICO **********
+	char numero[] = "NUMERO";
+    int eb = 0;
+    int ec = 0;
+    int etiqueta;
+	int Es_Funcion=0;
+	int Es_Funcion_break=0;
+	int val_switch;
+	int etiq_switch;
+    int reserva_dim=0;
+	char tipo[100]; 
+
+    int contador_parametros = 1;
+
+	// Si el flagSTAT esta a 0, es que podemos poner el STAT 
+	//   Si el flagCODE esta a 1 entonces se pone el CODE
+	int flagSTAT = 0;
+	int flagCODE = 1; 	// Si esta a 1 es que ya tiene el CODE Puesto
+	int flagVector = 0; // Indica que se ha realizado un a[1] => y no se debe considerar como puntero.
+	int esPrintf; 		// Indica si estamos haciendo un printf en C. =0, no es printf | =1, es printf | =2, es printf y tiene 2 parámetros
+	char printf1param[50]; // Primer parámetro del printf
+	int printf2param; 	// Segundo parámetro del printf
+    int parte_derecha = 0;
+	//int registro_almacenado = 0;
+
+    int flagRETURN = 0;
+    int flag_V = 0;*/
 %}
+// Como es una pila de unión, estos son los posibles valores que aceptará
+/************* PARA CUANDO USEMOS EL SEMÁNTICO *******************
+%union {
+  	int valor_entero;
+  	double valor_double;
+  	char * identificador;
+  	char * ristra;
+  	char* ttipo;
+  	char caracter;
+  	struct tipoval {
+  	double valor;
+  	char *tipo;
+}tdato;
 
 
-%token VOID FLOAT CONSTANT STRING STRING_C IDENTIFICATOR COMMENT CARACTER
+struct valor_expresion {
+     struct nodo_tabla_simbolos *puntero_variable; 
+     int valor_entero;
+     char *ristra;
+     double valor_double;
+     char * identificador;
+     char* tipo;
+     char caracter;
+ 
+     int pos_parametros;
+}valor_exp;
+
+//declaracion campos
+struct dc 
+  {
+     char *tipo;
+     char *identificador;
+  }declaracion_campos;
+}
+***********************************/
+
+/************* ESTO ERA DEL CHINO, ESTÁ ABAJO LO QUE VAMOS A USAR, LO DEJO ASÍ PARA Q SIRVA EN EL SEMÁNTICO YA, DE TODAS FORMAS MIRAR *********************
+%token VOID FLOAT CONSTANT <ristra>STRING <ristra>STRING_C <identificador>IDENTIFICATOR COMMENT <caracter>CARACTER
 %token LCORCH RCORCH LPARENT RPARENT LKEY RKEY POINT INC DEC ANDOP MULTOP ADDOP MINUSOP
 %token VIRGUOP NOTOP DIVOP MODOP LDESP RDESP LOWOP GREATOP LOWEQOP GREATEQOP EQUOP
 %token NOTEQOP ELEVADOOP OROP AND OR TWOPOINT SEMICOLON ASIGOP PRODASIGOP DIVASIGOP
 %token MODASIGOP SUMASIGOP RESASIGOP COLON
+%token BREAK CASE CHAR CONST DEFAULT DO DOUBLE ELSE FOR GOTO IF INT RETURN STRUCT SWITCH
+%token TYPEDEF UNION WHILE ESPACIO <valor_double>NUMERO
+
+%type <ttipo> tipo
+%type <valor_exp> identificador
+%type <valor_double> corchetes
+
+
+%type <valor_exp> expresion_primaria
+%type <valor_exp> expresion_asignable
+%type <valor_exp> expresion_unaria
+%type <valor_exp> expresion_cast
+%type <valor_exp> expresion_multiplicativa
+%type <valor_exp> expresion_aditiva
+%type <valor_exp> expresion_shift
+%type <valor_exp> expresion_relacional
+%type <valor_exp> expresion_igualdad
+%type <valor_exp> expresion_and
+%type <valor_exp> expresion_exclusiva_or
+%type <valor_exp> expresion_inclusiva_or
+%type <valor_exp> expresion_logica_and
+%type <valor_exp> expresion_logica_or
+%type <valor_exp> expresion_asignacion
+%type <valor_exp> expresion
+%type <valor_exp> expresion_condicional
+%type <valor_exp> declaracion_variable_simple_vector
+%type <valor_exp> posible_expresion
+%type <valor_exp> operador_asignacion
+
+%type <valor_entero> posible_matriz
+/*%type <valor_exp> expresion_asignable
+%type <valor_exp> expresion_unaria
+
+%type <valor_exp> expresion_cast{$$.tipo = $1; $$.identificador = $2;}
+%type <valor_exp> expresion_multiplicativa
+%type <valor_exp> expresion_aditiva
+%type <valor_exp> expresion_shift
+%type <valor_exp> expresion_relacional
+%type <valor_exp> expresion_igualdad
+%type <valor_exp> expresion_and
+%type <valor_exp> expresion_exclusiva_or
+%type <valor_exp> expresion_inclusiva_or
+%type <valor_exp> expresion_logica_andespecificacion_struct_o_union
+%type <valor_exp> expresion_logica_or
+%type <valor_exp> expresion_condicional
+%type <valor_exp> expresion_asignacion*/
+//%type <valor_exp> expresion_condicional
+********************************************/
+
+
+%token VOID FLOAT CONSTANT STRING STRING_C IDENT COMMENT CARACTER
+%token LCORCH RCORCH LPARENT RPARENT LKEY RKEY POINT INC DEC ANDOP MULTOP ADDOP MINUSOP
+%token VIRGUOP NOTOP DIVOP MODOP LDESP RDESP LOWOP GREATOP LOWEQOP GREATEQOP EQUOP
+%token NOTEQOP ELEVADOOP OROP AND OR TWOPOINT SEMICOLON ASIGOP PROD_ASIG_OP DIV_ASIG_OP
+%token MOD_ASIG_OP SUM_ASIG_OP RES_ASI_GOP COLON
 %token BREAK CASE CHAR CONST DEFAULT DO DOUBLE ELSE FOR GOTO IF INT RETURN STRUCT SWITCH
 %token TYPEDEF UNION WHILE ESPACIO NUMERO
 
@@ -206,7 +321,7 @@ declaracion_variable_simple_struct
 
 declaracion_variable_simple
 	: tipo IDENTIFICATOR
-	| tipo MULTOP IDENTIFICATOR
+	| tipo MULTOP IDENTIFICATOR {
  	;
 
 mas_identificadores
@@ -339,7 +454,7 @@ expresion_primaria
 //POSTFIX EXPRESION
 expresion_asignable
 	: expresion_primaria
-	| IDENTIFICATOR LCORCH expresion_vector RCORCH posible_matriz //{ ################################################# --- MAXIMO TRUÑACO EN SEMÁNTICO}
+	| IDENTIFICATOR LCORCH expresion_vector RCORCH posible_matriz {// ################################################# --- MAXIMO TRUÑACO EN SEMÁNTICO}
 	| expresion_asignable POINT identificador 
 	;
 
@@ -353,17 +468,17 @@ expresion_unaria
 	| operador_unario IDENTIFICATOR 
 	| expresion_unaria INC 
 	| expresion_unaria DEC
-	| INC expresion_asignable //{ ################################################# --- BUEN TRUÑO}
-	| DEC expresion_asignable  //{ ################################################# --- BUEN TRUÑO}
+	| INC expresion_asignable {// ################################################# --- BUEN TRUÑO}
+	| DEC expresion_asignable  {// ################################################# --- BUEN TRUÑO}
 	;
 
 operador_asignacion
 	: ASIGOP
 	| PRODASIGOP 
-	| DIVASIGOP 
-    | MODASIGOP 
-    | SUMASIGOP 
-    | RESASIGOP 
+        | DIVASIGOP 
+        | MODASIGOP 
+        | SUMASIGOP 
+        | RESASIGOP 
 	;
 
 expresion_multiplicativa
@@ -432,7 +547,7 @@ expresion_condicional
 
 expresion_asignacion
 	: expresion_condicional
-	| expresion_unaria operador_asignacion expresion_asignacion //{ ################################################# --- BUEN TRUÑO}
+	| expresion_unaria operador_asignacion expresion_asignacion {// ################################################# --- BUEN TRUÑO}
 	;
 
 expresion_vector
@@ -442,12 +557,12 @@ expresion_vector
 
 
 expresion
-	: expresion_asignacion		//{ ################################################# --- BUEN TRUÑO}
+	: expresion_asignacion		{// ################################################# --- BUEN TRUÑO}
 	| expresion COLON expresion_asignacion
 	;
 
 identificador
-	: IDENTIFICATOR //{ ################################################# --- BUEN TRUÑO}
+	: IDENTIFICATOR{// ################################################# --- BUEN TRUÑO}
 	;
 
 
@@ -460,12 +575,18 @@ extern int numlin;
 
 
 int main(int argc, char** argv) {
- 
-    printf(" Compilando...\n\n");
+    inicializacion();
+    inicializacion_GC();
+    inicializa_pila();
+    entrar_ambito();
+
+
+    printf("Cniu= : Compilando...\n\n");
 
     if (argc>1) yyin=fopen(argv[1],"r");
 	yyparse();
 
+    //ver_valores();
 
 }
 
