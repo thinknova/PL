@@ -640,9 +640,8 @@ char *yytext;
 #include <string.h>
 
 int numlin=1;
-//void error(char*);
 
-#line 646 "lex.yy.c"
+#line 645 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -830,7 +829,7 @@ YY_DECL
 #line 48 "lexico_sintactico.l"
 
 
-#line 834 "lex.yy.c"
+#line 833 "lex.yy.c"
 
 	if ( !(yy_init) )
 		{
@@ -1274,7 +1273,7 @@ YY_RULE_SETUP
 #line 133 "lexico_sintactico.l"
 ECHO;
 	YY_BREAK
-#line 1278 "lex.yy.c"
+#line 1277 "lex.yy.c"
 
 	case YY_END_OF_BUFFER:
 		{

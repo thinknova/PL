@@ -41,6 +41,41 @@ tipo
 	//| IDENT  //Mirar en el ejemplo a ver como se declaran los tipos identificadores
 	;
 
+
+declaraciones_variables_struct
+	: declaracion_variables_struct
+	| declaraciones_variables_struct declaracion_variables_struct
+	;
+
+identificadores_struct
+	: identificador
+	| identificador corchetes 
+	| MULTOP identificador 
+	| identificador mas_identificadores_struct COLON identificador
+	| identificador mas_identificadores_struct COLON identificador corchetes
+	| identificador mas_identificadores_struct COLON MULTOP identificador
+	| 
+	;
+
+mas_identificadores_struct
+	: mas_identificadores_struct COLON identificador 
+	| mas_identificadores_struct COLON identificador corchetes 
+	| mas_identificadores_struct COLON MULTOP identificador
+	|
+	;
+
+especificacion_struct_o_union
+	: struct_o_union identificador 
+	| struct_o_union LKEY declaraciones_variables_struct RKEY identificadores_struct SEMICOLON
+	;
+
+
+struct_o_union
+	: STRUCT
+	| UNION
+	;
+
+
 programa 
 	: declaraciones
 	;
@@ -49,6 +84,7 @@ programa
 parametro
 	: declaracion_variable_simple_parametro	/*Declaracion variable simple es int a ó char s ó char *s*/
 	| declaracion_variable_simple_parametro corchetes
+	| struct_o_union identificador identificador
 	;
 
 paso_parametros
@@ -162,6 +198,10 @@ declaracion_variable_simple_parametro
 	| tipo MULTOP IDENTIFICATOR 
 	;
 
+declaracion_variable_simple_struct
+	: tipo IDENTIFICATOR
+	| tipo MULTOP IDENTIFICATOR
+	;
 
 declaracion_variable_simple
 	: tipo IDENTIFICATOR
@@ -176,11 +216,27 @@ mas_identificadores
 	;
 
 
+declaracion_variable_simple_vector
+	: tipo IDENTIFICATOR
+	;
+
+
+declaracion_struct_struct
+	: struct_o_union IDENTIFICATOR IDENTIFICATOR
+	;
+
+declaracion_variables_struct
+	: declaracion_variable_simple_struct SEMICOLON
+	| declaracion_variable_simple_struct corchetes mas_identificadores SEMICOLON
+	| declaracion_struct_struct SEMICOLON //dentro de un struct no se puede definir un struct, sino solo declarar una variable de un struct ya creado 
+	;
+
 declaracion_variables
 	: declaracion_variable_simple mas_identificadores SEMICOLON
 	| declaracion_variable_simple ASIGOP expresion SEMICOLON
 	| declaracion_variable_simple corchetes mas_identificadores SEMICOLON
 	| declaracion_variable_simple corchetes ASIGOP inicializador SEMICOLON
+	| especificacion_struct_o_union
 	;
 
 /****************/
