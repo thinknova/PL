@@ -62,11 +62,11 @@
 #define TWOPOINT 50
 #define SEMICOLON 51
 #define ASIGOP 	52
-#define PROD_ASIG_OP 53
-#define DIV_ASIG_OP 54
-#define MOD_ASIG_OP 55
-#define SUM_ASIG_OP 56
-#define RES_ASIG_OP 57
+#define PRODASIGOP 53
+#define DIVASIGOP 54
+#define MODASIGOP 55
+#define SUMASIGOP 56
+#define RESASIGOP 57
 #define COLON 	58
 
 #define SCANF	59
@@ -165,11 +165,11 @@ scanf {return SCANF;}
 "=" {return ASIGOP;} 
 "++" {return INC;} 
 "--" {return DEC;} 
-"*=" {return PROD_ASIG_OP;} 
-"/=" {return DIV_ASIG_OP;} 
-"%=" {return MOD_ASIG_OP;}
-"+=" {return SUM_ASIG_OP;}
-"-=" {return RES_ASIG_OP;}
+"*=" {return PRODASIGOP;} 
+"/=" {return DIVASIGOP;} 
+"%=" {return MODASIGOP;}
+"+=" {return SUMASIGOP;}
+"-=" {return RESASIGOP;}
 
 "+" {return ADDOP;} 
 "-" {return MINUSOP;}
