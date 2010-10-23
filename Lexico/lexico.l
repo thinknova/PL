@@ -102,7 +102,7 @@ decimal_floating1 ({digito0}{digito0}*)?"."{digito0}{digito0}*([Ee]([+-])?{digit
 decimal_floating2 {digito0}{digito0}*"."({digito0}{digito0}*)?([Ee]([+-])?{digito0}{digito0}*)?
 decimal_floating3 {digito0}{digito0}*([Ee]([+-])?{digito0}{digito0}*)?
 
-comentario1 "/*"{comentario}*"*/"
+comentario1 "/*"{comentario_2}*"*/"
 comentario2 "//"{comentario_2}*
 
 character_constant \'({comentario}|{esq})\'
