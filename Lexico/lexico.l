@@ -39,7 +39,7 @@
 #define POINT	27
 #define INC 	28
 #define DEC 	29
-#define ANDOP 	31
+#define ANDOP 	30
 #define MULTOP 	31
 #define ADDOP 	32
 #define MINUSOP 33
@@ -159,29 +159,28 @@ scanf {return SCANF;}
 ":" {return TWOPOINT;} 
 ";" {return SEMICOLON;}
 "," {return COLON;}
-"~" {return VIRGUOP;}
-"!" {return NOTOP;}
 
 "=" {return ASIGOP;} 
-"++" {return INC;} 
-"--" {return DEC;} 
 "*=" {return PRODASIGOP;} 
 "/=" {return DIVASIGOP;} 
 "%=" {return MODASIGOP;}
 "+=" {return SUMASIGOP;}
 "-=" {return RESASIGOP;}
+"++" {return INC;} 
+"--" {return DEC;}
 
 "+" {return ADDOP;} 
 "-" {return MINUSOP;}
 "*" {return MULTOP;} 
 "/" {return DIVOP;} 
 "%" {return MODOP;} 
-"^" {return ELEVADOOP;}
  
-"<<" {return LDESP;}
-">>" {return RDESP;} 
 "&" {return ANDOP;} 
 "|" {return OROP;}
+"^" {return ELEVADOOP;}
+"~" {return VIRGUOP;}
+"<<" {return LDESP;}
+">>" {return RDESP;}
 
 "<" {return LOWOP;} 
 ">" {return GREATOP;}
@@ -191,7 +190,8 @@ scanf {return SCANF;}
 "!=" {return NOTEQOP;}
 
 "&&" {return AND;}
-"||" {return OR;} 
+"||" {return OR;}
+"!" {return NOTOP;} 
 
 \n {numlin++;}
 \t {}
