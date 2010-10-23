@@ -1,9 +1,11 @@
-/* ======================================== */
-/* -------  ANALIZADOR SINTÁCTICO  -------- */
-/* -------  =====================  -------- */                      
-/* ------  * Roberto Marco Sánchez  ------- */
-/* ------  * Pablo E. Ojeda Vasco   ------- */
-/* ======================================== */
+/****************************************************************/
+/*	SOFTWARE NAME: Analizador Sintáctico						*/
+/*	SOFTWARE RELEASE: 1.0										*/
+/*	SOFTWARE LICENSE: GNU General Public License				*/
+/* 	DEVELOPERS: Roberto Marco Sánchez y Pablo E. Ojeda Vasco	*/
+/*	CONTENT:													*/
+/*		Estructura de fichero para analizador sintáctico		*/
+/****************************************************************/
 
 %{
 	#include <stdio.h>
