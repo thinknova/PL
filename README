@@ -1,2 +1,12 @@
-Modificación usando un branch experimental
+----------------------------------------------
+ DESARROLLADO POR:
+	Pablo Ojeda Vasco
+	Roberto Marco Sánchez
+ LICENCIA: GNU General Public License
+ TITULO: Compilador Lex/Flex para lenguaje C
+----------------------------------------------
 
+	- Analizador Léxico
+	- Analizador Sintáctico
+	- Analizador Semántico
+	- Generación de código
