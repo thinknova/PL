@@ -8,10 +8,10 @@
 /****************************************************************/
 
 %{
+#include "sintactico_sin_semantica.tab.h"
 #include <string.h>
 
 int numlin=1;
-void error(char*);
 
 %}
 
@@ -66,13 +66,11 @@ typedef {return TYPEDEF;}
 union {return UNION;}
 void {return VOID;}
 while {return WHILE;} 
-printf {return PRINTF;}
-scanf {return SCANF;}
 
 " " {}
 {comentario1}|{comentario2} {}
 
-{letra}{letdig}* {return IDENT;}
+{letra}{letdig}* {return IDENTIFICATOR;}
 {integer_constant} {return NUMERO;}
 {decimal_floating1}|{decimal_floating2}|{decimal_floating3} {return NUMERO;}
 
@@ -128,7 +126,7 @@ scanf {return SCANF;}
 \n {numlin++;}
 \t {}
 ^#.* {}
-. {error("Carácter no permitido");}
+. {yyerror("Carácter no permitido");}
 <<EOF>> {return 0;}
 
 %%

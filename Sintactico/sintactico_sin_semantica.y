@@ -13,6 +13,7 @@
 	
 	extern FILE *yyin; 	/* declarado en lexico */
 	extern int numlin; 	/* lexico le da valores */
+	//extern char yytext[];
 	int yydebug=1; 		/* modo debug si -t */
 
 %}
@@ -452,17 +453,12 @@ identificador
 
 
 %%
-#include <stdio.h>
-#include <stdlib.h>
-
-extern char yytext[];
-extern int numlin;
-
 
 int main(int argc, char** argv) {
  
     printf(" Compilando...\n\n");
-
+	fflush(stdout);
+	
     if (argc>1) yyin=fopen(argv[1],"r");
 	yyparse();
 
