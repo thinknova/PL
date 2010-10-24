@@ -22,8 +22,7 @@ letdig {letra}|{digito0}
 hexa [a-fA-F0-9]
 oct [0-7]
 
-comentario [^\" \' \\ \n] 	
-comentario_1 []																	
+comentario [^\" \' \\ \n] 																		
 comentario_2 [^\n]
 
 decimal {digito}{digito0}*

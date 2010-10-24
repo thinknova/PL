@@ -826,7 +826,7 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 48 "lexico_sintactico.l"
+#line 47 "lexico_sintactico.l"
 
 
 #line 833 "lex.yy.c"
@@ -915,362 +915,362 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 50 "lexico_sintactico.l"
+#line 49 "lexico_sintactico.l"
 {return BREAK;}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 51 "lexico_sintactico.l"
+#line 50 "lexico_sintactico.l"
 {return CASE;}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 52 "lexico_sintactico.l"
+#line 51 "lexico_sintactico.l"
 {return CHAR;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 53 "lexico_sintactico.l"
+#line 52 "lexico_sintactico.l"
 {return CONST;}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 54 "lexico_sintactico.l"
+#line 53 "lexico_sintactico.l"
 {return DEFAULT;}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 55 "lexico_sintactico.l"
+#line 54 "lexico_sintactico.l"
 {return DO;}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 56 "lexico_sintactico.l"
+#line 55 "lexico_sintactico.l"
 {return DOUBLE;}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 57 "lexico_sintactico.l"
+#line 56 "lexico_sintactico.l"
 {return ELSE;}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 58 "lexico_sintactico.l"
+#line 57 "lexico_sintactico.l"
 {return FLOAT;}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 59 "lexico_sintactico.l"
+#line 58 "lexico_sintactico.l"
 {return FOR;}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 60 "lexico_sintactico.l"
+#line 59 "lexico_sintactico.l"
 {return GOTO;}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 61 "lexico_sintactico.l"
+#line 60 "lexico_sintactico.l"
 {return IF;}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 62 "lexico_sintactico.l"
+#line 61 "lexico_sintactico.l"
 {return INT;}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 63 "lexico_sintactico.l"
+#line 62 "lexico_sintactico.l"
 {return RETURN;}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 64 "lexico_sintactico.l"
+#line 63 "lexico_sintactico.l"
 {return STRUCT;}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 65 "lexico_sintactico.l"
+#line 64 "lexico_sintactico.l"
 {return SWITCH;}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 66 "lexico_sintactico.l"
+#line 65 "lexico_sintactico.l"
 {return TYPEDEF;}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 67 "lexico_sintactico.l"
+#line 66 "lexico_sintactico.l"
 {return UNION;}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 68 "lexico_sintactico.l"
+#line 67 "lexico_sintactico.l"
 {return VOID;}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 69 "lexico_sintactico.l"
+#line 68 "lexico_sintactico.l"
 {return WHILE;} 
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 71 "lexico_sintactico.l"
+#line 70 "lexico_sintactico.l"
 {}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 72 "lexico_sintactico.l"
+#line 71 "lexico_sintactico.l"
 {}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 74 "lexico_sintactico.l"
+#line 73 "lexico_sintactico.l"
 {return IDENTIFICATOR;}
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 75 "lexico_sintactico.l"
+#line 74 "lexico_sintactico.l"
 {return NUMERO;}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 76 "lexico_sintactico.l"
+#line 75 "lexico_sintactico.l"
 {return NUMERO;}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 78 "lexico_sintactico.l"
+#line 77 "lexico_sintactico.l"
 {return CARACTER;} 
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 79 "lexico_sintactico.l"
+#line 78 "lexico_sintactico.l"
 {return STRING;}
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 80 "lexico_sintactico.l"
+#line 79 "lexico_sintactico.l"
 {return STRING_C;}
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 82 "lexico_sintactico.l"
+#line 81 "lexico_sintactico.l"
 {return LCORCH;} 
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 83 "lexico_sintactico.l"
+#line 82 "lexico_sintactico.l"
 {return RCORCH;} 
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 84 "lexico_sintactico.l"
+#line 83 "lexico_sintactico.l"
 {return LPARENT;} 
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 85 "lexico_sintactico.l"
+#line 84 "lexico_sintactico.l"
 {return RPARENT;} 
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 86 "lexico_sintactico.l"
+#line 85 "lexico_sintactico.l"
 {return LKEY;} 
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 87 "lexico_sintactico.l"
+#line 86 "lexico_sintactico.l"
 {return RKEY;} 
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 89 "lexico_sintactico.l"
+#line 88 "lexico_sintactico.l"
 {return POINT;}
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 90 "lexico_sintactico.l"
+#line 89 "lexico_sintactico.l"
 {return TWOPOINT;} 
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 91 "lexico_sintactico.l"
+#line 90 "lexico_sintactico.l"
 {return SEMICOLON;}
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 92 "lexico_sintactico.l"
+#line 91 "lexico_sintactico.l"
 {return COLON;}
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 94 "lexico_sintactico.l"
+#line 93 "lexico_sintactico.l"
 {return ASIGOP;} 
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 95 "lexico_sintactico.l"
+#line 94 "lexico_sintactico.l"
 {return PRODASIGOP;} 
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 96 "lexico_sintactico.l"
+#line 95 "lexico_sintactico.l"
 {return DIVASIGOP;} 
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 97 "lexico_sintactico.l"
+#line 96 "lexico_sintactico.l"
 {return MODASIGOP;}
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 98 "lexico_sintactico.l"
+#line 97 "lexico_sintactico.l"
 {return SUMASIGOP;}
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 99 "lexico_sintactico.l"
+#line 98 "lexico_sintactico.l"
 {return RESASIGOP;}
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 100 "lexico_sintactico.l"
+#line 99 "lexico_sintactico.l"
 {return INC;} 
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 101 "lexico_sintactico.l"
+#line 100 "lexico_sintactico.l"
 {return DEC;}
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 103 "lexico_sintactico.l"
+#line 102 "lexico_sintactico.l"
 {return ADDOP;} 
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 104 "lexico_sintactico.l"
+#line 103 "lexico_sintactico.l"
 {return MINUSOP;}
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 105 "lexico_sintactico.l"
+#line 104 "lexico_sintactico.l"
 {return MULTOP;} 
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 106 "lexico_sintactico.l"
+#line 105 "lexico_sintactico.l"
 {return DIVOP;} 
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 107 "lexico_sintactico.l"
+#line 106 "lexico_sintactico.l"
 {return MODOP;} 
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 109 "lexico_sintactico.l"
+#line 108 "lexico_sintactico.l"
 {return ANDOP;} 
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 110 "lexico_sintactico.l"
+#line 109 "lexico_sintactico.l"
 {return OROP;}
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 111 "lexico_sintactico.l"
+#line 110 "lexico_sintactico.l"
 {return ELEVADOOP;}
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 112 "lexico_sintactico.l"
+#line 111 "lexico_sintactico.l"
 {return VIRGUOP;}
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 113 "lexico_sintactico.l"
+#line 112 "lexico_sintactico.l"
 {return LDESP;}
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 114 "lexico_sintactico.l"
+#line 113 "lexico_sintactico.l"
 {return RDESP;}
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 116 "lexico_sintactico.l"
+#line 115 "lexico_sintactico.l"
 {return LOWOP;} 
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 117 "lexico_sintactico.l"
+#line 116 "lexico_sintactico.l"
 {return GREATOP;}
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 118 "lexico_sintactico.l"
+#line 117 "lexico_sintactico.l"
 {return LOWEQOP;} 
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 119 "lexico_sintactico.l"
+#line 118 "lexico_sintactico.l"
 {return GREATEQOP;}
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 120 "lexico_sintactico.l"
+#line 119 "lexico_sintactico.l"
 {return EQUOP;}
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 121 "lexico_sintactico.l"
+#line 120 "lexico_sintactico.l"
 {return NOTEQOP;}
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 123 "lexico_sintactico.l"
+#line 122 "lexico_sintactico.l"
 {return AND;}
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 124 "lexico_sintactico.l"
+#line 123 "lexico_sintactico.l"
 {return OR;}
 	YY_BREAK
 case 66:
 YY_RULE_SETUP
-#line 125 "lexico_sintactico.l"
+#line 124 "lexico_sintactico.l"
 {return NOTOP;} 
 	YY_BREAK
 case 67:
 /* rule 67 can match eol */
 YY_RULE_SETUP
-#line 127 "lexico_sintactico.l"
+#line 126 "lexico_sintactico.l"
 {numlin++;}
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 128 "lexico_sintactico.l"
+#line 127 "lexico_sintactico.l"
 {}
 	YY_BREAK
 case 69:
 YY_RULE_SETUP
-#line 129 "lexico_sintactico.l"
+#line 128 "lexico_sintactico.l"
 {}
 	YY_BREAK
 case 70:
 YY_RULE_SETUP
-#line 130 "lexico_sintactico.l"
+#line 129 "lexico_sintactico.l"
 {yyerror("Carácter no permitido");}
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
-#line 131 "lexico_sintactico.l"
+#line 130 "lexico_sintactico.l"
 {return 0;}
 	YY_BREAK
 case 71:
 YY_RULE_SETUP
-#line 133 "lexico_sintactico.l"
+#line 132 "lexico_sintactico.l"
 ECHO;
 	YY_BREAK
 #line 1277 "lex.yy.c"
@@ -2271,7 +2271,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 133 "lexico_sintactico.l"
+#line 132 "lexico_sintactico.l"
 
 
 /**********************************************************

@@ -144,8 +144,8 @@ inicializador
 	;
 
 lista_inicializador
-	: identificador
-	| lista_inicializador COLON identificador
+	: inicializador
+	| lista_inicializador COLON inicializador
 	;
 
 
