@@ -125,8 +125,7 @@ sentencias_salto
 	;
 
 sentencias_etiquetas
-	: identificador TWOPOINT sentencia
-	| CASE NUMERO
+	: CASE NUMERO
 	  TWOPOINT LKEY lista_sentencias RKEY 
 	;
 
