@@ -103,17 +103,3 @@ scanf {return SCANF;}
 . {yyerror("Carácter no permitido");}
 
 %%
-/**********************************************************
-*  Innecesario, puesto que ya no es un programa independiente
-int main(int argc, char** argv){
-	int s;
-	if(argc>1) yyin=fopen(argv[1],"r");
-	do printf("%i \n", s=yylex()); while(s != 0);
-	return 0;
-}
-
-void error(char* mens){
-	printf("Error lexico en linea %i: %s\n",numlin,mens);
-}
-
-**********************************************************/

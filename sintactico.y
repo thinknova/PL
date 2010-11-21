@@ -17,6 +17,7 @@
 
 %{
 	#include "stdio.h"
+	#include "tabla.h"
 	#include "stdlib.h"
 
 	extern FILE *yyin; 	/* declarado en lexico */
@@ -244,6 +245,9 @@ mas_parametros:
 
 
 %%
+
+
+
 
 int yyerror(char* mens) {
 	printf("Error en linea %i: %s \n",numlin,mens);
