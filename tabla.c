@@ -1,5 +1,16 @@
 #include "tabla.h"
 
+/*
+ *	-------------------------------------------
+ *	DESARROLLADO POR:
+ *		Pablo Ojeda Vasco
+ *		Roberto Marco Sánchez
+ *	LICENCIA: GNU General Public License
+ * 	TITULO: Compilador Lex/Flex para lenguaje C
+ *  -------------------------------------------
+ *  Tabla de símbolos (tabla.c)
+ *
+ */
 
 // Inicializa la tabla de símbolos
 PLista inicializa(PLista lista){
@@ -68,7 +79,6 @@ PNodoLista busca(PLista lista, char *p){
 	}
         return NULL;
 }
-
 
 PNodoLista busca2(PLista lista, char *p, int ambito){
         if ((lista->NumElem!=0) && (p!="")){

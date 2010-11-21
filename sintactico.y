@@ -1,9 +1,14 @@
-/* ======================================== */
-/* -------  ANALIZADOR SINTÁCTICO  -------- */
-/* -------  =====================  -------- */                      
-/* ------  * Roberto Marco Sánchez  ------- */
-/* ------  * Pablo E. Ojeda Vasco   ------- */
-/* ======================================== */
+/*
+ *	-------------------------------------------
+ *	DESARROLLADO POR:
+ *		Pablo Ojeda Vasco
+ *		Roberto Marco Sánchez
+ *	LICENCIA: GNU General Public License
+ * 	TITULO: Compilador Lex/Flex para lenguaje C
+ *  -------------------------------------------
+ *  Analizador Sintactico (sintactico.y)
+ *
+ */
 /*********************************************
 	Falta not !=
 	Falta completar expresion: - exp, +exp
@@ -26,7 +31,6 @@
 %token <ristra> FLOAT 
 %token <ristra> CHAR
 %token <ristra> STRING
-
 
 %token RETURN
 

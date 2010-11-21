@@ -1,11 +1,14 @@
-/****************************************************************/
-/*	SOFTWARE NAME: Analizador léxico							*/
-/*	SOFTWARE RELEASE: 1.0										*/
-/*	SOFTWARE LICENSE: GNU General Public License				*/
-/* 	DEVELOPERS: Roberto Marco Sánchez y Pablo E. Ojeda Vasco	*/
-/*	CONTENT:													*/
-/*		Estructura de fichero para analizador léxico 			*/
-/****************************************************************/
+/*
+ *	-------------------------------------------
+ *	DESARROLLADO POR:
+ *		Pablo Ojeda Vasco
+ *		Roberto Marco Sánchez
+ *	LICENCIA: GNU General Public License
+ * 	TITULO: Compilador Lex/Flex para lenguaje C
+ *  -------------------------------------------
+ *  Analizador Léxico (lexico.l)
+ *
+ */
 /****************************************************************
 	De momento no admitimos procedimientos, sólo funciones	
 *****************************************************************/
