@@ -29,11 +29,7 @@
 
 %token LCORCH RCORCH LPARENT RPARENT LKEY RKEY
 %token TWOPOINT SEMICOLON COLON
-%token ASIGOP PRODASIGOP DIVASIGOP MODASIGOP SUMASIGOP RESASIGOP INC DEC
-%token ADDOP MINUSOP MULTOP DIVOP
-%token ANDOP OROP ELEVADOOP VIRGUOP LDESP RDESP
-%token LOWOP GREATOP LOWEQOP GREATEQOP EQUOP NOTEQOP
-%token AND OR NOTOP
+%token NOTEQOP
 
 %token <ristra> IDENT
 %token <ristra> INT 
@@ -73,6 +69,7 @@
 
 %token PRINTF SCANF
 
+%right EQUOP
 %right ASIGOP
 %right LOWOP GREATOP 
 %left ADDOP 
@@ -93,7 +90,7 @@ programa:
 	;
 
 def_global: 
-	GLOBAL tipos mas_variables SEMICOLONLPARENT def_global
+	GLOBAL tipos mas_variables SEMICOLON def_global
 	| GLOBAL CONST TIPO_INT IDENT ASIGOP INT SEMICOLON def_global
 	| GLOBAL CONST TIPO_FLOAT IDENT ASIGOP FLOAT SEMICOLON def_global
 	| GLOBAL CONST TIPO_CHAR IDENT ASIGOP CHAR SEMICOLON def_global
@@ -107,7 +104,7 @@ mas_variables:
 	;
 
 variables2: 
-	COLON mas_variables
+	COLON	mas_variables
 	|
 	;
 
@@ -147,7 +144,6 @@ tipos:
 declaraciones: 
 	tipos variables SEMICOLON
 	| CONST TIPO_INT IDENT ASIGOP INT SEMICOLON
-	|
 	;
 
 variables:
@@ -246,6 +242,7 @@ mas_parametros:
 	|
 	;
 
+
 %%
 
 int yyerror(char* mens) {
@@ -265,8 +262,3 @@ int main(int argc, char** argv) {
 	yyparse();
 
 }
-
-
-
-
-

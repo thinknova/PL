@@ -86,37 +86,16 @@ scanf {return SCANF;}
 "," {return COLON;}
 
 "=" {return ASIGOP;} 
-"*=" {return PRODASIGOP;} 
-"/=" {return DIVASIGOP;} 
-"%=" {return MODASIGOP;}
-"+=" {return SUMASIGOP;}
-"-=" {return RESASIGOP;}
-"++" {return INC;} 
-"--" {return DEC;}
 
 "+" {return ADDOP;} 
 "-" {return MINUSOP;}
 "*" {return MULTOP;} 
 "/" {return DIVOP;} 
- 
-"&" {return ANDOP;} 
-"|" {return OROP;}
-"^" {return ELEVADOOP;}
-"~" {return VIRGUOP;}
-"<<" {return LDESP;}
-">>" {return RDESP;}
 
 "<" {return LOWOP;} 
 ">" {return GREATOP;}
-"<=" {return LOWEQOP;} 
-">=" {return GREATEQOP;}
 "==" {return EQUOP;}
 "!=" {return NOTEQOP;}
-
-"&&" {return AND;}
-"||" {return OR;}
-"!" {return NOTOP;} 
-
 
 \n {numlin++;}
 \t {}
