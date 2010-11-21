@@ -1,5 +1,3 @@
-#include "tabla.h"
-
 /*
  *	-------------------------------------------
  *	DESARROLLADO POR:
@@ -12,12 +10,14 @@
  *
  */
 
+#include "tabla.h"
+
 // Inicializa la tabla de símbolos
 PLista inicializa(PLista lista){
 	lista =(PLista)malloc(sizeof(TLista));
-        lista->NumElem=0;
-        lista->primero=NULL;
-        lista->ultimo=NULL;
+    lista->NumElem=0;
+    lista->primero=NULL;
+    lista->ultimo=NULL;
 
 	ts(lista,"entero", "tipo", 0, "", 4, 0);
 	ts(lista,"caracter", "tipo", 0, "", 1, 0);
@@ -29,25 +29,22 @@ PLista inicializa(PLista lista){
 
 // Inserta entradas en la tabla de símbolos
 int ts(PLista lista,char* nombre, char* categoria, int ambito, char* tipo, int tamano, int dir){
-       
- 	TNodoLista *nuevo = (TNodoLista *)malloc(sizeof(TNodoLista));
-        
-        if(nuevo!=NULL){
-                if (lista->NumElem!=0){
-                        
-			nuevo->nombre = nombre;
+	TNodoLista *nuevo = (TNodoLista *)malloc(sizeof(TNodoLista));
+    if(nuevo!=NULL){
+    	if (lista->NumElem!=0){
+        	nuevo->nombre = nombre;
 			nuevo->categoria = categoria;
 			nuevo->ambito = ambito;
 			nuevo->tipo = busca(lista,tipo);
 
 			nuevo->dir = dir;
 			
-                        nuevo->sig=NULL;
-                        nuevo->ant=lista->ultimo;
-                        lista->ultimo->sig=nuevo;
-                        lista->ultimo=nuevo;
-                }
-                else {
+            nuevo->sig=NULL;
+            nuevo->ant=lista->ultimo;
+			lista->ultimo->sig=nuevo;
+			lista->ultimo=nuevo;
+		}
+		else {
 			nuevo->nombre = nombre;
 			nuevo->categoria = categoria;
 			nuevo->ambito = ambito;
@@ -55,47 +52,44 @@ int ts(PLista lista,char* nombre, char* categoria, int ambito, char* tipo, int t
 		
 			nuevo->dir = dir;
 
-		        nuevo->sig=NULL;
-		        nuevo->ant=NULL;
-		        lista->primero=nuevo;
-		        lista->ultimo=nuevo;
-
+		    nuevo->sig=NULL;
+		    nuevo->ant=NULL;
+		    lista->primero=nuevo;
+		    lista->ultimo=nuevo;
 		}
+		
 		lista->ultimo->tamano = tamano;
 		lista->NumElem=lista->NumElem+1;
-	    	return 1;
-        }
-        return 0;
+	    return 1;
+	}
+    return 0;
 }
 
 // Devuelve la direccion de la entrada de la tabla de simbolos en caso de que exista. Si no, devuelve nulo.
 PNodoLista busca(PLista lista, char *p){
-        if ((lista->NumElem!=0) && (p!="")){
-                PNodoLista aux=lista->primero;
-                while (aux!=NULL){
-                        if(strcmp (aux->nombre,p)==0) return aux;
-                        else aux=aux->sig;
-                }
+    if ((lista->NumElem!=0) && (p!="")){
+		PNodoLista aux=lista->primero;
+        while (aux!=NULL){
+        	if(strcmp (aux->nombre,p)==0) return aux;
+            else aux=aux->sig;
+        }
 	}
-        return NULL;
+    return NULL;
 }
 
 PNodoLista busca2(PLista lista, char *p, int ambito){
-        if ((lista->NumElem!=0) && (p!="")){
-                PNodoLista aux=lista->primero;
-                while (aux!=NULL){
-			if (aux->ambito == ambito){
-                        	if(strcmp (aux->nombre,p)==0)
-					return aux;
-			}
+	if ((lista->NumElem!=0) && (p!="")){
+    	PNodoLista aux=lista->primero;
+        while (aux!=NULL){
+			if (aux->ambito == ambito) {
+				if(strcmp (aux->nombre,p)==0) return aux;
+			} 
 			else
-				if ((aux-> ambito == 0) && (strcmp (aux->nombre,p)==0))
-					return aux;
-					
-                        aux=aux->sig;
-                }
+				if ((aux-> ambito == 0) && (strcmp (aux->nombre,p)==0)) return aux;					
+            aux=aux->sig;
+		}
 	}
-        return NULL;
+    return NULL;
 }
 
 // Devuelve el campo dirección de la variable pasada.
@@ -126,7 +120,6 @@ char* tipovar2(PLista lista, char *p, int ambito){
 		PNodoLista aux = local -> tipo;
 		if (aux) return aux -> nombre;
 		else return local->nombre;
-		
 	}
 	else return NULL;
 } 
@@ -201,43 +194,41 @@ int devambito(PLista lista, char* funcion){
 		return 0;
 }
 
+// Devuelve la categoría
 char* categoria(PLista lista, char* id, int ambito){
 	PNodoLista local = busca2 (lista,id,ambito);
 	if (local != NULL) return local-> categoria;
 	else return NULL;	
 }
 
-
+// Destruye la tabla de símbolos
 void destruye(PLista lista){
-        if (lista->NumElem!=0){
-                PNodoLista aux=lista->primero;
-                while (aux->sig!=NULL){
-                        aux=aux->sig;
-                        free(lista->primero);
-                        lista->primero=aux;
-                        lista->NumElem=lista->NumElem-1;
-                }
-                free(lista->ultimo);
-                lista->NumElem=lista->NumElem-1;
+	if (lista->NumElem!=0){
+    	PNodoLista aux=lista->primero;
+        while (aux->sig!=NULL){
+        	aux=aux->sig;
+            free(lista->primero);
+            lista->primero=aux;
+            lista->NumElem=lista->NumElem-1;
         }
+        free(lista->ultimo);
+        lista->NumElem=lista->NumElem-1;
+	}
 }
 
+// Imprime por pantalla la tabla de símbolos
 void imprimeTS(PLista lista){
-	 printf("\n\n---Tabla de símbolos---\n");
-	 if (lista->NumElem!=0){
-                PNodoLista aux=lista->primero;
+	printf("\n\n---Tabla de símbolos---\n");
+	if (lista->NumElem!=0){
+    	PNodoLista aux=lista->primero;
 		char *name;
 		int contador = 0;
-                while (aux->sig!=NULL){
+        while (aux->sig!=NULL){
 			name = tipovar2(lista,aux->nombre,aux->ambito);
-			
-                        printf("Entrada %d: nombre = %s, categoria = %s, ambito = %d, tipo = %s, tamano = %d, dir = 0x%x\n", 
-					contador, aux->nombre, aux->categoria, aux->ambito, name, aux->tamano, aux->dir);
+			printf("Entrada %d: nombre = %s, categoria = %s, ambito = %d, tipo = %s, tamano = %d, dir = 0x%x\n", contador, aux->nombre, aux->categoria, aux->ambito, name, aux->tamano, aux->dir);
 			aux=aux->sig;
 			contador+=1;
-                }
-		printf("Entrada %d: nombre = %s, categoria = %s, ambito = %d, tipo = %s, tamano = %d, dir = 0x%x\n\n\n\n", 
-					contador, aux->nombre, aux->categoria, aux->ambito, name, aux->tamano, aux->dir);
-        }
+		}
+		printf("Entrada %d: nombre = %s, categoria = %s, ambito = %d, tipo = %s, tamano = %d, dir = 0x%x\n\n\n\n", contador, aux->nombre, aux->categoria, aux->ambito, name, aux->tamano, aux->dir);
+	}
 }
-

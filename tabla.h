@@ -1,10 +1,3 @@
-#ifndef LISTA_H_
-#define LISTA_H_
-
-#include "stdlib.h"
-#include "stdio.h"
-#include <string.h>
-
 /*
  *	-------------------------------------------
  *	DESARROLLADO POR:
@@ -16,6 +9,13 @@
  *  Tabla de símbolos (tabla.h)
  *
  */
+
+#ifndef LISTA_H_
+#define LISTA_H_
+
+#include "stdlib.h"
+#include "stdio.h"
+#include <string.h>
 
 typedef struct NodoLista TNodoLista, *PNodoLista;
 
