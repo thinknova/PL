@@ -17,7 +17,6 @@
 
 %{
 	#include "stdio.h"
-	#include "tabla.h"
 	#include "stdlib.h"
 
 	extern FILE *yyin; 	/* declarado en lexico */
