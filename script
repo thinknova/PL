@@ -1,3 +1,0 @@
-flex lexico.l
-bison -v -d sintactico.y
-gcc -o sint lex.yy.c sintactico.tab.c -lfl
