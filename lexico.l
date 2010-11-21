@@ -44,7 +44,7 @@ asignacion [=]
 
 %%
 
-main {return MAIN;}
+"main" {return MAIN;}
 return {return RETURN;}
 
 if {return IF;}
@@ -56,11 +56,11 @@ case {return CASE;}
 default {return DEFAULT;}
 break {return BREAK;}
 
-int {yylval.ristra=strdup(yytext); return TIPO_INT;}
+"int" {yylval.ristra=strdup(yytext); return TIPO_INT;}
 float {yylval.ristra=strdup(yytext); return TIPO_FLOAT;}
 char {yylval.ristra=strdup(yytext); return TIPO_CHAR;}
 const {return CONST;}
-global {return GLOBAL;}
+"global" {return GLOBAL;}
 
 printf {return PRINTF;}
 scanf {return SCANF;}
@@ -74,7 +74,29 @@ scanf {return SCANF;}
 '{letra}' {yylval.ristra=yytext[1]; return CHAR;} 
 \"{letra}{letdig}*\" {yylval.ristra=strdup(yytext); return STRING;}
 
-"!=" {return NOT;}
+"[" {return LCORCH;} 
+"]" {return RCORCH;} 
+"(" {return LPARENT;} 
+")" {return RPARENT;} 
+"{" {return LKEY;} 
+"}" {return RKEY;} 
+
+":" {return TWOPOINT;} 
+";" {return SEMICOLON;}
+"," {return COLON;}
+
+"=" {return ASIGOP;} 
+
+"+" {return ADDOP;} 
+"-" {return MINUSOP;}
+"*" {return MULTOP;} 
+"/" {return DIVOP;} 
+
+"<" {return LOWOP;} 
+">" {return GREATOP;}
+"==" {return EQUOP;}
+"!=" {return NOTEQOP;}
+
 \n {numlin++;}
 \t {}
 ^#.* {}
