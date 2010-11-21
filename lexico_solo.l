@@ -100,7 +100,12 @@ scanf {return SCANF;}
 '{letra}' {return CHAR;} 
 \"{letra}{letdig}*\" {return STRING;}
 
+{separadores} {}
+{oparitmetico} {}
+{oprelacional} {}
+{asignacion} {}
 "!=" {return NOT;}
+
 \n {numlin++;}
 \t {}
 ^#.* {}
