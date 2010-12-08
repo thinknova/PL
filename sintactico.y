@@ -7,13 +7,12 @@
  * 	TITULO: Compilador Lex/Flex para lenguaje C
  *  -------------------------------------------
  *  Analizador Sintactico (sintactico.y)
- * 		Nota: 	Falta not != y completar expresion: - exp, +exp
  *
  */
 
 %{
 	#include "stdio.h"
-	#include "tabla.h	"
+	#include "tabla.h"
 	#include "stdlib.h"
 
 	extern FILE *yyin; 	/* declarado en lexico */
@@ -21,7 +20,7 @@
 	int yydebug=1; 		/* modo debug si -t */
 	
 	PLista p;					/* Tabla de símbolos */
-	char* tipo;					/* Contiene "entero","real",...." */
+	char* tipo;					/* Contiene "int","float",...." */
 	char* tipo2;
 	char* tipovec;				/* Contiene el tipo del vector */
 	char* tipodec;				/* Contiene el tipo de la declaracion */
@@ -31,7 +30,7 @@
 	int label = 2;				/* Para las etiquetas */
 	int eb = 0;					/* Etiqueta del break (sdb) */
 	int ec = 0;					/* Etiqueta del continue (continuar) */
-	int reg[8] = {0,0,0,0,0,0,0,0}; /* Vector para comprobar los registros enteros libres */
+	int reg[6] = {0,0,0,0,0,0}; /* Vector para comprobar los registros enteros libres */
 	int rreg[4] = {0,0,0,0}; 	/* Vector para comprobar los registros flotantes libres */
 	int vid;					/* Almacena el valor del identificador */
 	int rid;					/* Registro del identificador */
@@ -56,7 +55,6 @@
 
 %token LCORCH RCORCH LPARENT RPARENT LKEY RKEY
 %token TWOPOINT SEMICOLON COLON
-%token NOTEQOP
 
 %token <ristra> IDENT
 %token <ristra> INT 
@@ -103,6 +101,7 @@
 %left MINUSOP 
 %left DIVOP 
 %left MULTOP
+%left NOTOP
 %nonassoc Unitario
 %right 'e' 'E'
 
@@ -125,17 +124,17 @@ def_global:
 	| GLOBAL CONST TIPO_INT IDENT 
 	  {if (busca(p,$4)) yyerror("Identificador ya declarado");} 
 	  ASIGOP INT SEMICOLON 
-	  { int dir = alin(4); ts(p, $4,"estatico", 0, "entero", 4, dir); printf("\tDAT(0x%x, I, %s);\n", dir, $7);}
+	  { int dir = alin(4); ts(p, $4,"estatico", 0, "int", 4, dir); printf("\tDAT(0x%x, I, %s);\n", dir, $7);}
 	  def_global 
 	| GLOBAL CONST TIPO_FLOAT IDENT 
 	  {if (busca(p,$4)) yyerror("Identificador ya declarado");} 
 	  ASIGOP FLOAT SEMICOLON 
-	  { int dir = alin(4); ts(p, $4,"estatico", 0, "real", 4, dir); printf("\tDAT(0x%x, I, %s);\n", dir, $7);}
+	  { int dir = alin(4); ts(p, $4,"estatico", 0, "float", 4, dir); printf("\tDAT(0x%x, I, %s);\n", dir, $7);}
 	  def_global
 	| GLOBAL CONST TIPO_CHAR IDENT 
 	  {if (busca(p,$4)) yyerror("Identificador ya declarado");} 
 	  ASIGOP CHAR SEMICOLON 
-	  { int dir = alin(4); ts(p, $4,"estatico", 0, "caracter", 4, dir); printf("\tDAT(0x%x, I, %s);\n", dir, $7);}
+	  { int dir = alin(4); ts(p, $4,"estatico", 0, "char", 4, dir); printf("\tDAT(0x%x, I, %s);\n", dir, $7);}
 	  def_global
 	|
 	;
@@ -152,16 +151,14 @@ mas_variables:
 	variables2	
 	| IDENT {if (busca2(p,$1,ambito)) yyerror("Identificador ya declarado");}
 	  ASIGOP constante {
-				if (strcmp(tipo,tipodec)) yyerror("Tipo incorrecto en la asignación de la declaración");
-				int dir = alinloc(tamtipo);
-				loc = dir;
-				ts(p, $1,"variable", ambito, tipodec, tamtipo, loc);
-				loc2 += tamtipo;
-				printf("\tR7 = R7 - %d;\n",tamtipo);			 
-				if (!strcmp(tipodec,"entero"))  {printf("\tI(R6-%d) = R%d;\n", direccion(p,$1,ambito), $4);  lib_reg($4); }
-				if (!strcmp(tipodec,"real"))    {printf("\tF(R6-%d) = RR%d;\n", direccion(p,$1,ambito), $4); lib_rreg($4);}
-				if (!strcmp(tipodec,"caracter")){printf("\tU(R6-%d) = R%d;\n", direccion(p,$1,ambito), $4);  lib_reg($4); } 
-			} 
+			if (compruebatipo(tipodec,$4)){
+			int dir = alin(tamtipo); 
+		   	ts(p, $1,"estatico", 0, tipodec, tamtipo, dir); 
+	 	   	if (esreal($4)) printf("\tDAT(0x%x, F, %s);\n", dir, $4);
+			if (esentero($4)) printf("\tDAT(0x%x, I, %s);\n", dir, $4);
+			if (escaracter($4)) printf("\tDAT(0x%x, U, %s);\n", dir, $4);}
+	 	   else
+			yyerror("Tipo incorrecto en la declaracion");}
 	  variables2
 	| IDENT {if (busca2(p,$1,ambito)) yyerror("Identificador vector ya declarado");} 
 	  LCORCH INT RCORCH {
@@ -217,10 +214,10 @@ instrucciones:
 		  	printf("\tR7 = R6;\n\tR6 = P(R7+4);\n\tR5 = P(R7);\n\tGT(R5);\n");}
 	| PRINTF LPARENT exp RPARENT SEMICOLON { 
 			int x = ne();
-			if (strcmp("entero",tipo)==0)
+			if (strcmp("int",tipo)==0)
 				printf("\tR2 = R%d;\n\tR1 = 0x11ffc;\n\tR0 = %d;\n\tGT(putf_);\nL %d:\n",$3, x, x);
 			else 
-			   	if (strcmp("real",tipo)==0)
+			   	if (strcmp("float",tipo)==0)
 			    	printf("\tRR2 = RR%d;\n\tR1 = 0x11ff8;\n\tR0 = %d;\n\tGT(putff_);\nL %d:\n",$3, x, x);
 				else
 				   	printf("\tR2 = R%d;\n\tR1 = 0x11ff4;\n\tR0 = %d;\n\tGT(putf_);\nL %d:\n",$3, x, x);}
@@ -239,7 +236,7 @@ declaraciones:
 	variables SEMICOLON
 	| CONST TIPO_INT IDENT {if (busca(p,$3)) yyerror("Identificador ya declarado");}
 	  ASIGOP INT SEMICOLON
-	  {int dir = alinloc(4); loc = dir; ts(p, $3,"variable", ambito, "entero", 4, loc); loc2+=4;}
+	  {int dir = alinloc(4); loc = dir; ts(p, $3,"variable", ambito, "int", 4, loc); loc2+=4;}
 	;
 
 variables:
@@ -261,9 +258,9 @@ variables:
 			 	ts(p, $1,"variable", ambito, tipodec, tamtipo, loc);
 			 	loc2 += tamtipo;
 			 	printf("\tR7 = R7 - %d;\n",tamtipo);			 
-			 	if (!strcmp(tipodec,"entero"))  {printf("\tI(R6-%d) = R%d;\n", direccion(p,$1,ambito), $4);  lib_reg($4); }
-			 	if (!strcmp(tipodec,"real"))    {printf("\tF(R6-%d) = RR%d;\n", direccion(p,$1,ambito), $4); lib_rreg($4);}
-			 	if (!strcmp(tipodec,"caracter")){printf("\tU(R6-%d) = R%d;\n", direccion(p,$1,ambito), $4);  lib_reg($4); }}
+			 	if (!strcmp(tipodec,"int"))  {printf("\tI(R6-%d) = R%d;\n", direccion(p,$1,ambito), $4);  lib_reg($4); }
+			 	if (!strcmp(tipodec,"float"))    {printf("\tF(R6-%d) = RR%d;\n", direccion(p,$1,ambito), $4); lib_rreg($4);}
+			 	if (!strcmp(tipodec,"char")){printf("\tU(R6-%d) = R%d;\n", direccion(p,$1,ambito), $4);  lib_reg($4); }}
 	  variables3
 	| IDENT {if (busca2(p,$1,ambito)) yyerror("Identificador vector ya declarado");}  
 	  LCORCH INT RCORCH {
@@ -293,28 +290,28 @@ asignacion:
 		{
 			if(strcmp(tipovar2(p,$1, ambito), tipo)) yyerror("Tipo incorrecto en la asignación");
 			if (!strcmp("parametro",(char *) categoria(p,$1,ambito))) {
-				if (!strcmp(tipo,"entero"))  {printf("\tI(R6+%d) = R%d;\n", direccion(p,$1,ambito), $4);  lib_reg($4); }
-				if (!strcmp(tipo,"real"))    {printf("\tF(R6+%d) = RR%d;\n", direccion(p,$1,ambito), $4); lib_rreg($4);}
-				if (!strcmp(tipo,"caracter")){printf("\tU(R6+%d) = R%d;\n", direccion(p,$1,ambito), $4);  lib_reg($4); } 
+				if (!strcmp(tipo,"int"))  {printf("\tI(R6+%d) = R%d;\n", direccion(p,$1,ambito), $4);  lib_reg($4); }
+				if (!strcmp(tipo,"float"))    {printf("\tF(R6+%d) = RR%d;\n", direccion(p,$1,ambito), $4); lib_rreg($4);}
+				if (!strcmp(tipo,"char")){printf("\tU(R6+%d) = R%d;\n", direccion(p,$1,ambito), $4);  lib_reg($4); } 
 			}
 			if (!strcmp("variable",(char *) categoria(p,$1,ambito))){
-				if (!strcmp(tipo,"entero"))  {printf("\tI(R6-%d) = R%d;\n", direccion(p,$1,ambito), $4);  lib_reg($4); }
-				if (!strcmp(tipo,"real"))    {printf("\tF(R6-%d) = RR%d;\n", direccion(p,$1,ambito), $4); lib_rreg($4);}
-				if (!strcmp(tipo,"caracter")){printf("\tU(R6-%d) = R%d;\n", direccion(p,$1,ambito), $4);  lib_reg($4); } 
+				if (!strcmp(tipo,"int"))  {printf("\tI(R6-%d) = R%d;\n", direccion(p,$1,ambito), $4);  lib_reg($4); }
+				if (!strcmp(tipo,"float"))    {printf("\tF(R6-%d) = RR%d;\n", direccion(p,$1,ambito), $4); lib_rreg($4);}
+				if (!strcmp(tipo,"char")){printf("\tU(R6-%d) = R%d;\n", direccion(p,$1,ambito), $4);  lib_reg($4); } 
 		 	}
 			if (!strcmp("estatico",(char *) categoria(p,$1,ambito))){
-				if (!strcmp(tipo,"entero"))  {printf("\tI(0x%x) = R%d;\n", direccion(p,$1,ambito), $4);  lib_reg($4); }
-			 	if (!strcmp(tipo,"real"))    {printf("\tF(0x%x) = RR%d;\n", direccion(p,$1,ambito), $4); lib_rreg($4);}
-			 	if (!strcmp(tipo,"caracter")){printf("\tU(0x%x) = R%d;\n", direccion(p,$1,ambito), $4);  lib_reg($4); }
+				if (!strcmp(tipo,"int"))  {printf("\tI(0x%x) = R%d;\n", direccion(p,$1,ambito), $4);  lib_reg($4); }
+			 	if (!strcmp(tipo,"float"))    {printf("\tF(0x%x) = RR%d;\n", direccion(p,$1,ambito), $4); lib_rreg($4);}
+			 	if (!strcmp(tipo,"char")){printf("\tU(0x%x) = R%d;\n", direccion(p,$1,ambito), $4);  lib_reg($4); }
 			}
 		}
 	| vector ASIGOP {tipovec = tipo;}
 	  exp 
 		{ 
 			if(strcmp(tipovec, tipo)) yyerror("Tipo incorrecto en la asignación");
-			if (!strcmp(tipo,"entero"))  {printf("\tI(R%d) = R%d;\n", $1, $4);  lib_reg($4); }
-			if (!strcmp(tipo,"real"))    {printf("\tF(R%d) = RR%d;\n", $1, $4); lib_rreg($4);}
-			if (!strcmp(tipo,"caracter")){printf("\tU(R%d) = R%d;\n", $1, $4);  lib_reg($4); }
+			if (!strcmp(tipo,"int"))  {printf("\tI(R%d) = R%d;\n", $1, $4);  lib_reg($4); }
+			if (!strcmp(tipo,"float"))    {printf("\tF(R%d) = RR%d;\n", $1, $4); lib_rreg($4);}
+			if (!strcmp(tipo,"char")){printf("\tU(R%d) = R%d;\n", $1, $4);  lib_reg($4); }
 		}
 	;
 
@@ -329,7 +326,7 @@ int_vec:
 	INT {$$=asig_reg(); printf("\tR%d = %s;\n",$$,$1);}
 	| IDENT 
 		{
-			if(strcmp("entero",tipovar2(p,$1,ambito))) yyerror("Argumento del vector debe ser tipo entero");
+			if(strcmp("int",tipovar2(p,$1,ambito))) yyerror("Argumento del vector debe ser tipo int");
 			$$=asig_reg(); int x = direccion(p,$1,ambito); 
 			if (x) printf("\tR%d = R6 - 0x%x;\n\tR%d = I(R%d);\n",$$,x,$$, $$); else yyerror("Argumento del vector no declarado");
 		}
@@ -339,27 +336,27 @@ exp:
 	constante
 		{
 			recuperatipo($1); 
-			if (!strcmp(tipo,"entero"))  {$$=asig_reg(); printf("\tR%d = %s;\n", $$, $1); }
-			if (!strcmp(tipo,"real"))    {$$=asig_rreg(); printf("\tRR%d = %s;\n", $$, $1);}
-			if (!strcmp(tipo,"caracter")){$$=asig_reg(); printf("\tR%d = %s;\n", $$, $1); }
+			if (!strcmp(tipo,"int"))  {$$=asig_reg(); printf("\tR%d = %s;\n", $$, $1); }
+			if (!strcmp(tipo,"float"))    {$$=asig_rreg(); printf("\tRR%d = %s;\n", $$, $1);}
+			if (!strcmp(tipo,"char")){$$=asig_reg(); printf("\tR%d = %s;\n", $$, $1); }
 		}
 	| IDENT 	 
 		{ 
 			tipo = tipovar2(p,$1,ambito); if (!tipo) yyerror("Identificador no declarado"); 
 			if (!strcmp("parametro",(char *) categoria(p,$1,ambito))) {
-				if (!strcmp(tipo,"entero"))  {$$=asig_reg();printf("\tR%d = I(R6+%d);\n", $$, direccion(p,$1,ambito));}
-				if (!strcmp(tipo,"real"))    {$$=asig_rreg();printf("\tRR%d = F(R6+%d);\n",$$, direccion(p,$1,ambito));}
-				if (!strcmp(tipo,"caracter")){$$=asig_reg();printf("\tR%d = U(R6+%d);\n", $$, direccion(p,$1,ambito)); } 
+				if (!strcmp(tipo,"int"))  {$$=asig_reg();printf("\tR%d = I(R6+%d);\n", $$, direccion(p,$1,ambito));}
+				if (!strcmp(tipo,"float"))    {$$=asig_rreg();printf("\tRR%d = F(R6+%d);\n",$$, direccion(p,$1,ambito));}
+				if (!strcmp(tipo,"char")){$$=asig_reg();printf("\tR%d = U(R6+%d);\n", $$, direccion(p,$1,ambito)); } 
 			}
 			if (!strcmp("variable",(char *) categoria(p,$1,ambito))){
-				if (!strcmp(tipo,"entero"))  {$$=asig_reg();printf("\tR%d = I(R6-%d);\n", $$, direccion(p,$1,ambito));}
-				if (!strcmp(tipo,"real"))    {$$=asig_rreg();printf("\tRR%d = F(R6-%d);\n",$$, direccion(p,$1,ambito));}
-				if (!strcmp(tipo,"caracter")){$$=asig_reg();printf("\tR%d = U(R6-%d);\n", $$, direccion(p,$1,ambito)); } 
+				if (!strcmp(tipo,"int"))  {$$=asig_reg();printf("\tR%d = I(R6-%d);\n", $$, direccion(p,$1,ambito));}
+				if (!strcmp(tipo,"float"))    {$$=asig_rreg();printf("\tRR%d = F(R6-%d);\n",$$, direccion(p,$1,ambito));}
+				if (!strcmp(tipo,"char")){$$=asig_reg();printf("\tR%d = U(R6-%d);\n", $$, direccion(p,$1,ambito)); } 
 			}
 			if (!strcmp("estatico",(char *) categoria(p,$1,ambito))){
-				if (!strcmp(tipo,"entero"))  {$$=asig_reg();printf("\tR%d = I(0x%x);\n", $$, direccion(p,$1,ambito)); }
-				if (!strcmp(tipo,"real"))    {$$=asig_rreg();printf("\tRR%d = F(0x%x);\n", $$, direccion(p,$1,ambito));}
-				if (!strcmp(tipo,"caracter")){$$=asig_reg();printf("\tR%d = U(0x%x);\n", $$, direccion(p,$1,ambito)); }
+				if (!strcmp(tipo,"int"))  {$$=asig_reg();printf("\tR%d = I(0x%x);\n", $$, direccion(p,$1,ambito)); }
+				if (!strcmp(tipo,"float"))    {$$=asig_rreg();printf("\tRR%d = F(0x%x);\n", $$, direccion(p,$1,ambito));}
+				if (!strcmp(tipo,"char")){$$=asig_reg();printf("\tR%d = U(0x%x);\n", $$, direccion(p,$1,ambito)); }
 			}
 		}
 	| vector 	{printf("\tR%d = I(R%d);\n", $1, $1);}
@@ -367,77 +364,101 @@ exp:
 	  exp 
 		{
 			if (strcmp(tipo2,tipo)) yyerror("Tipos incorrectos en la expresión"); $$=$1; 
-			if (!strcmp(tipo,"entero"))  {printf("\tR%d = R%d + R%d;\n",$1,$1,$4); lib_reg($4); }
-			if (!strcmp(tipo,"real"))    {printf("\tRR%d = RR%d + RR%d;\n",$1,$1,$4); lib_rreg($4);}
-			if (!strcmp(tipo,"caracter")){printf("\tR%d = R%d + R%d;\n",$1,$1,$4); lib_reg($4); }
+			if (!strcmp(tipo,"int"))  {printf("\tR%d = R%d + R%d;\n",$1,$1,$4); lib_reg($4); }
+			if (!strcmp(tipo,"float"))    {printf("\tRR%d = RR%d + RR%d;\n",$1,$1,$4); lib_rreg($4);}
+			if (!strcmp(tipo,"char")){printf("\tR%d = R%d + R%d;\n",$1,$1,$4); lib_reg($4); }
 		}
 	| exp MINUSOP{tipo2 = tipo}
 	  exp 	
 		{
 			if (strcmp(tipo2,tipo)) yyerror("Tipos incorrectos en la expresión"); $$=$1;
-			if (!strcmp(tipo,"entero"))  {printf("\tR%d = R%d - R%d;\n",$1,$1,$4); lib_reg($4); }
-			if (!strcmp(tipo,"real"))    {printf("\tRR%d = RR%d - RR%d;\n",$1,$1,$4); lib_rreg($4);}
-			if (!strcmp(tipo,"caracter")){printf("\tR%d = R%d - R%d;\n",$1,$1,$4); lib_reg($4);}
+			if (!strcmp(tipo,"int"))  {printf("\tR%d = R%d - R%d;\n",$1,$1,$4); lib_reg($4); }
+			if (!strcmp(tipo,"float"))    {printf("\tRR%d = RR%d - RR%d;\n",$1,$1,$4); lib_rreg($4);}
+			if (!strcmp(tipo,"char")){printf("\tR%d = R%d - R%d;\n",$1,$1,$4); lib_reg($4);}
 		}
 	| exp MULTOP{tipo2 = tipo}
 	  exp 
 		{
 			if (strcmp(tipo2,tipo)) yyerror("Tipos incorrectos en la expresión"); $$=$1;			 
-			if (!strcmp(tipo,"entero"))  {printf("\tR%d = R%d * R%d;\n",$1,$1,$4); lib_reg($4); }
-			if (!strcmp(tipo,"real"))    {printf("\tRR%d = RR%d * RR%d;\n",$1,$1,$4); lib_rreg($4);}
-			if (!strcmp(tipo,"caracter")){printf("\tR%d = R%d * R%d;\n",$1,$1,$4); lib_reg($4); }
+			if (!strcmp(tipo,"int"))  {printf("\tR%d = R%d * R%d;\n",$1,$1,$4); lib_reg($4); }
+			if (!strcmp(tipo,"float"))    {printf("\tRR%d = RR%d * RR%d;\n",$1,$1,$4); lib_rreg($4);}
+			if (!strcmp(tipo,"char")){printf("\tR%d = R%d * R%d;\n",$1,$1,$4); lib_reg($4); }
 		}
 	| exp DIVOP {tipo2 = tipo} 
 	  exp 
 		{
 			if (strcmp(tipo2,tipo)) yyerror("Tipos incorrectos en la expresión"); $$=$1;
-			if (!strcmp(tipo,"entero"))  {printf("\tR%d = R%d / R%d;\n",$1,$1,$4); lib_reg($4); }
-			if (!strcmp(tipo,"real"))    {printf("\tRR%d = RR%d / RR%d;\n",$1,$1,$4); lib_rreg($4);}
-			if (!strcmp(tipo,"caracter")){printf("\tR%d = R%d / R%d;\n",$1,$1,$4); lib_reg($4); }
+			if (!strcmp(tipo,"int"))  {printf("\tR%d = R%d / R%d;\n",$1,$1,$4); lib_reg($4); }
+			if (!strcmp(tipo,"float"))    {printf("\tRR%d = RR%d / RR%d;\n",$1,$1,$4); lib_rreg($4);}
+			if (!strcmp(tipo,"char")){printf("\tR%d = R%d / R%d;\n",$1,$1,$4); lib_reg($4); }
 		}
 	| LPARENT exp RPARENT 	{$$=$2;}
+	
+	| NOTOP exp 	 		
+		{
+			$$=$2;					 
+			if (!strcmp(tipo,"int"))  {printf("\tR%d = !R%d;\n",$2,$2);}
+ 		    if (!strcmp(tipo,"float"))    {printf("\tRR%d = !RR%d;\n",$2,$2); }
+ 		    if (!strcmp(tipo,"char")){printf("\tR%d = !R%d;\n",$2,$2);}
+		}
+						
+	| ADDOP exp %prec Unitario 		
+		{
+			$$=$2;
+			if (!strcmp(tipo,"int"))  {printf("\tR%d = +R%d;\n",$2,$2);}
+			if (!strcmp(tipo,"float"))    {printf("\tRR%d = +RR%d;\n",$2,$2); }
+			if (!strcmp(tipo,"char")){printf("\tR%d = +R%d;\n",$2,$2);}
+		}
+	| MINUSOP exp %prec Unitario 		
+		{
+			$$=$2;
+			if (!strcmp(tipo,"int"))  {printf("\tR%d = -R%d;\n",$2,$2);}
+			if (!strcmp(tipo,"float"))    {printf("\tRR%d = -RR%d;\n",$2,$2); }
+			if (!strcmp(tipo,"char")){printf("\tR%d = -R%d;\n",$2,$2);}
+		}
+	
 	| exp GREATOP {tipo2 = tipo}
 	  exp 
 		{
 			if (strcmp(tipo2,tipo)) yyerror("Tipos incorrectos en la expresión");
-			if (!strcmp(tipo,"entero"))  {$$=asig_reg();printf("\tR%d = R%d > R%d;\n",$$,$1,$4); lib_reg($1); lib_reg($4); }
-			if (!strcmp(tipo,"real"))    {$$=asig_rreg();printf("\tRR%d = RR%d > RR%d;\n",$$,$1,$4); lib_rreg($1);lib_rreg($4);}
-			if (!strcmp(tipo,"caracter")){$$=asig_reg();printf("\tR%d = R%d > R%d;\n",$$,$1,$4); lib_reg($1); lib_reg($4); }
+			if (!strcmp(tipo,"int"))  {$$=asig_reg();printf("\tR%d = R%d > R%d;\n",$$,$1,$4); lib_reg($1); lib_reg($4); }
+			if (!strcmp(tipo,"float"))    {$$=asig_rreg();printf("\tRR%d = RR%d > RR%d;\n",$$,$1,$4); lib_rreg($1);lib_rreg($4);}
+			if (!strcmp(tipo,"char")){$$=asig_reg();printf("\tR%d = R%d > R%d;\n",$$,$1,$4); lib_reg($1); lib_reg($4); }
 		}
 	| exp LOWOP {tipo2 = tipo}
 	  exp 
 		{
 			if (strcmp(tipo2,tipo)) yyerror("Tipos incorrectos en la expresión");
-			if (!strcmp(tipo,"entero"))  {$$=asig_reg(); printf("\tR%d = R%d < R%d;\n",$$,$1,$4); lib_reg($1); lib_reg($4); }
-			if (!strcmp(tipo,"real"))    {$$=asig_rreg(); printf("\tRR%d = RR%d < RR%d;\n",$$,$1,$4); lib_rreg($1);lib_rreg($4);}
-			if (!strcmp(tipo,"caracter")){$$=asig_reg(); printf("\tR%d = R%d < R%d;\n",$$,$1,$4); lib_reg($1); lib_reg($4); }
+			if (!strcmp(tipo,"int"))  {$$=asig_reg(); printf("\tR%d = R%d < R%d;\n",$$,$1,$4); lib_reg($1); lib_reg($4); }
+			if (!strcmp(tipo,"float"))    {$$=asig_rreg(); printf("\tRR%d = RR%d < RR%d;\n",$$,$1,$4); lib_rreg($1);lib_rreg($4);}
+			if (!strcmp(tipo,"char")){$$=asig_reg(); printf("\tR%d = R%d < R%d;\n",$$,$1,$4); lib_reg($1); lib_reg($4); }
 		}
 	| exp EQUOP {tipo2 = tipo}
 	  exp 
 		{
 			if (strcmp(tipo2,tipo)) yyerror("Tipos incorrectos en la expresión");
-			if (!strcmp(tipo,"entero"))  {$$=asig_reg();printf("\tR%d = R%d == R%d;\n",$$,$1,$5); lib_reg($1); lib_reg($5); }
-			if (!strcmp(tipo,"real"))    {$$=asig_reg();printf("\tRR%d = RR%d == RR%d;\n",$$,$1,$5); lib_rreg($1);lib_rreg($5);}
-			if (!strcmp(tipo,"caracter")){$$=asig_reg();printf("\tR%d = R%d == R%d;\n",$$,$1,$5); lib_reg($1); lib_reg($5); }
+			if (!strcmp(tipo,"int"))  {$$=asig_reg();printf("\tR%d = R%d == R%d;\n",$$,$1,$4); lib_reg($1); lib_reg($4); }
+			if (!strcmp(tipo,"float"))    {$$=asig_reg();printf("\tRR%d = RR%d == RR%d;\n",$$,$1,$4); lib_rreg($1);lib_rreg($4);}
+			if (!strcmp(tipo,"char")){$$=asig_reg();printf("\tR%d = R%d == R%d;\n",$$,$1,$4); lib_reg($1); lib_reg($4); }
 		}
 	| llamada_funcion {$$=0;} 
 	;
 
 si:
 	IF LPARENT exp RPARENT 			{$$=eb; eb=ne(); printf("\tIF(!R%d) GT(%d);\n",$3,eb); lib_reg($3);}
-	LKEY instrucciones RKEY sino 	{ eb = $<entero1>5;}
+	LKEY instrucciones RKEY sino 	{ eb = $<entero>5;}
 	;
 
 sino:
-	ELSE 					{$$=ec; ec=ne(); printf("\tGT(%d);\nL %d:\n",ec,eb);} 
-	LKEY instrucciones RKEY { printf("L %d:\n",ec); ec = $<entero1>2;}
-	| 						{printf("L %d:\n",eb);}
+	ELSE 					{ $$=ec; ec=ne(); printf("\tGT(%d);\nL %d:\n",ec,eb);} 
+	LKEY instrucciones RKEY { printf("L %d:\n",ec); ec = $<entero>2;}
+	| 						{ printf("L %d:\n",eb);}
 	;
 
 mientras:
 	WHILE 					{$$=ec; ec=ne(); printf("L %d:\n",ec);}
-	LPARENT exp RPARENT 	{$$=eb; eb=ne(); printf("\tIF(!R%d) GT(%d);\n",$<entero1>4,eb); lib_reg($<entero1>4);}
-	LKEY cuerpo_bucle RKEY 	{ printf("\tGT(%d);\nL %d:\n",ec,eb); ec=$<entero1>2; eb=$<entero1>6;}
+	LPARENT exp RPARENT 	{$$=eb; eb=ne(); printf("\tIF(!R%d) GT(%d);\n",$<entero>4,eb); lib_reg($<entero>4);}
+	LKEY cuerpo_bucle RKEY 	{ printf("\tGT(%d);\nL %d:\n",ec,eb); ec=$<entero>2; eb=$<entero>6;}
 	;
 
 cuerpo_bucle:
@@ -447,10 +468,10 @@ cuerpo_bucle:
 
 para:
 	FOR LPARENT asignacion SEMICOLON 	{$$=ec; ec=ne(); printf("L %d:\n",ec);}
-	exp SEMICOLON 						{$$=eb; eb=ne(); printf("\tIF(!R%d) GT(%d);\n",$<entero1>6,eb); lib_reg($<entero1>6); 
+	exp SEMICOLON 						{$$=eb; eb=ne(); printf("\tIF(!R%d) GT(%d);\n",$<entero>6,eb); lib_reg($<entero>6); 
 											guardado = dup(1);close(1); f = fopen("volcado.txt","w+");}
 	asignacion 							{close(1); dup(guardado); close(guardado); close(f);}
-	RPARENT LKEY cuerpo_bucle RKEY		{volcado(); printf("\tGT(%d);\nL %d:\n",ec,eb); ec=$<entero1>5; eb=$<entero1>8;}
+	RPARENT LKEY cuerpo_bucle RKEY		{volcado(); printf("\tGT(%d);\nL %d:\n",ec,eb); ec=$<entero>5; eb=$<entero>8;}
 	;
 
 elegir:
@@ -458,7 +479,7 @@ elegir:
 			{
 				eb=ne(); rid= asig_reg();  int x = direccion(p,$3,ambito); 
 				if (!x) yyerror("Identificador no declarado");
-				if (strcmp("entero",tipovar2(p,$3,ambito))) yyerror("El identificador debe ser tipo entero");
+				if (strcmp("int",tipovar2(p,$3,ambito))) yyerror("El identificador debe ser tipo int");
 				if (!strcmp("parametro",(char *) categoria(p,$3,ambito))) printf("\tR%d = I(R6+%d);\n",rid,x);
 				if (!strcmp("variable",(char *) categoria(p,$3,ambito)))  printf("\tR%d = I(R6-%d);\n",rid,x);
 				if (!strcmp("estatico",(char *) categoria(p,$3,ambito)))  printf("\tR%d = I(0x%x);\n",rid,x);}
@@ -473,8 +494,7 @@ cuerpo_elegir:
 	;
 
 caso:
-	BREAK SEMICOLON {if(eb) printf("\tGT(%d);\n",eb); else printf("err(21)\n");} 
-	instrucciones
+	BREAK SEMICOLON {if(eb) printf("\tGT(%d);\n",eb); else printf("err(21)\n");}  instrucciones
 	|
 	;
 
@@ -504,9 +524,9 @@ parametros: {tipopar = tipoargfun(p,idfun,narg2); if (tipopar == NULL) yyerror("
 	exp 
 		{ 	
 			if (strcmp(tipo,tipopar))    yyerror("Tipo incorrecto en el parámetro");
-       		if (!strcmp(tipo,"entero"))  printf("\tI(R7 + %d) = R%d;\n", dirargfun(p,idfun,narg2), $2 ); lib_reg($2);
-			if (!strcmp(tipo,"real"))    printf("\tF(R7 + %d) = RR%d;\n", dirargfun(p,idfun,narg2), $2 ); lib_rreg($2);
-			if (!strcmp(tipo,"caracter"))printf("\tU(R7 + %d) = R%d;\n", dirargfun(p,idfun,narg2), $2 ); lib_reg($2);
+       		if (!strcmp(tipo,"int"))  printf("\tI(R7 + %d) = R%d;\n", dirargfun(p,idfun,narg2), $2 ); lib_reg($2);
+			if (!strcmp(tipo,"float"))    printf("\tF(R7 + %d) = RR%d;\n", dirargfun(p,idfun,narg2), $2 ); lib_rreg($2);
+			if (!strcmp(tipo,"char"))printf("\tU(R7 + %d) = R%d;\n", dirargfun(p,idfun,narg2), $2 ); lib_reg($2);
 			narg2++;
      	}
  	mas_parametros
@@ -518,6 +538,7 @@ mas_parametros:
 	;
 
 %%
+
 // Sirve para alinear las posiciones de memoria
 int alin(int b){
 	int x = estat % 4;
@@ -552,8 +573,8 @@ int alinpar(int tam){
 // Devuelve el tamaño del tipo
 int bytes(char *s){
 	switch(s[0]){
-		case 'e': return 4;
-		case 'r': return 4;
+		case 'i': return 4;
+		case 'f': return 4;
 		case 'c': return 1;
 	}
 }
@@ -583,7 +604,7 @@ int asig_rreg(){
 // Funcion para liberar los registros
 int lib_regs() {
 	int i;
-	for (i=0; i<8; i++)
+	for (i=0; i<6; i++)
 		reg[i] = 0;
 	return 0;
 }
@@ -631,8 +652,8 @@ int esreal(char *f){
 	return 1;	
 }
 
-// Chequeo semántico para los enteros
-int esentero(char *f){
+// Chequeo semántico para los enteros - Tener en cuenta que 48 es 0 en ASCII (valor decimal) y 57 es 9
+int esentero(char *f){ 
 	int i;
 	for (i=0; i < strlen(f); i++) {
 		if (f[i]<48 || f[i]>57){
@@ -663,8 +684,8 @@ int escaracter(char *f){
 // Comprueba que el tipo es correcto en las declaraciones
 int compruebatipo(char *p, char *s){
 	switch(p[0]){
-		case 'e': return esentero(s);
-		case 'r': return esreal(s);
+		case 'i': return esentero(s);
+		case 'f': return esreal(s);
 		case 'c': return escaracter(s);
 	}
 	return 0;
@@ -672,11 +693,11 @@ int compruebatipo(char *p, char *s){
 
 int recuperatipo(char *s){
 	if (esentero(s))
-		tipo = "entero";
+		tipo = "int";
 	if (esreal(s))
-		tipo = "real";
+		tipo = "float";
 	if (escaracter(s))
-		tipo = "caracter";
+		tipo = "char";
 	return 1;
 }
 
@@ -700,10 +721,9 @@ int yyerror(char* mens) {
 }
 
 int main(int argc, char** argv) {
-	//printf("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
-	printf("PRUEBA\n");
-
-	
+	printf("Generando codigo maquina\n");
+	p = inicializa(p);
+		
 	if (argc>1) 
 		yyin=fopen(argv[1],"r");
 

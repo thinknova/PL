@@ -9,10 +9,9 @@
  *  Analizador Léxico (lexico.l)
  *
  */
-/****************************************************************
-	De momento no admitimos procedimientos, sólo funciones	
-*****************************************************************/
+
 %{
+
 #include "sintactico.tab.h"
 #include <string.h>
 
@@ -24,8 +23,7 @@ letra [a-zA-Z_]
 digito0 [0-9]
 digito [1-9]
 letdig {letra}|{digito0}
-
-comentario_2 [^\" \' \\ \n]																	
+																
 comentario [^\n]
 comentario1 "/*"{comentario}*"*/"
 comentario2 "//"{comentario}*
@@ -37,14 +35,9 @@ decimal_floating1 ({digito0}{digito0}*)?"."{digito0}{digito0}*([Ee]([+-])?{digit
 decimal_floating2 {digito0}{digito0}*"."({digito0}{digito0}*)?([Ee]([+-])?{digito0}{digito0}*)?
 decimal_floating3 {digito0}{digito0}*([Ee]([+-])?{digito0}{digito0}*)?
 
-separadores [(){}'\[''\]';,:]
-oparitmetico ['+''\-''*''/']
-oprelacional [<>]
-asignacion [=]
-
 %%
 
-"main" {return MAIN;}
+main {return MAIN;}
 return {return RETURN;}
 
 if {return IF;}
@@ -56,11 +49,11 @@ case {return CASE;}
 default {return DEFAULT;}
 break {return BREAK;}
 
-"int" {yylval.ristra=strdup(yytext); return TIPO_INT;}
+int {yylval.ristra=strdup(yytext); return TIPO_INT;}
 float {yylval.ristra=strdup(yytext); return TIPO_FLOAT;}
 char {yylval.ristra=strdup(yytext); return TIPO_CHAR;}
 const {return CONST;}
-"global" {return GLOBAL;}
+global {return GLOBAL;}
 
 printf {return PRINTF;}
 scanf {return SCANF;}
@@ -71,7 +64,7 @@ scanf {return SCANF;}
 {letra}{letdig}* {yylval.ristra=strdup(yytext); return IDENT;}
 {integer} {yylval.ristra=strdup(yytext); return INT;}
 {decimal_floating1}|{decimal_floating2}|{decimal_floating3} {yylval.ristra=strdup(yytext); return FLOAT;}
-'{letra}' {yylval.ristra=yytext[1]; return CHAR;} 
+'{letra}' {yylval.ristra=strdup(yytext); return CHAR;} 
 \"{letra}{letdig}*\" {yylval.ristra=strdup(yytext); return STRING;}
 
 "[" {return LCORCH;} 
@@ -95,7 +88,7 @@ scanf {return SCANF;}
 "<" {return LOWOP;} 
 ">" {return GREATOP;}
 "==" {return EQUOP;}
-"!=" {return NOTEQOP;}
+"!" {return NOTOP;}
 
 \n {numlin++;}
 \t {}
@@ -103,6 +96,7 @@ scanf {return SCANF;}
 . {yyerror("Carácter no permitido");}
 
 %%
+
 /**********************************************************
 *  Innecesario, puesto que ya no es un programa independiente
 int main(int argc, char** argv){

@@ -19,10 +19,9 @@ PLista inicializa(PLista lista){
     lista->primero=NULL;
     lista->ultimo=NULL;
 
-	ts(lista,"entero", "tipo", 0, "", 4, 0);
-	ts(lista,"caracter", "tipo", 0, "", 1, 0);
-	ts(lista,"real", "tipo", 0, "", 4, 0);
-	ts(lista,"logico", "tipo", 0, "", 4, 0);
+	ts(lista,"int", "tipo", 0, "", 4, 0);
+	ts(lista,"char", "tipo", 0, "", 1, 0);
+	ts(lista,"float", "tipo", 0, "", 4, 0);
 	
 	return lista;
 }
