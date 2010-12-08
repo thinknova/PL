@@ -1,0 +1,20 @@
+global float pi = 3.14;
+
+float multiplica(real a, real b){
+	return a*b;
+}
+int principal(){
+	int v[3];
+	v[0]=90;
+	v[1]=40;
+	v[2]=55;
+	int i=0;
+	while (i<3) {
+		printf(v[i]);
+		i=i+1;
+	}
+	printf(multiplica(1.5,pi));
+	printf('A');
+	return 1;
+}
+
